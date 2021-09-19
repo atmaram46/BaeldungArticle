@@ -1,0 +1,5 @@
+Quick and Practical Example of Hexagonal Architecture in Java
+
+1. Overview
+
+Software which requires minimum effort for maintenance is considered good in design. Meaning, maintenance is one of the must key feature which should be considered while designing the Architecture of an application. In this article, we will be looking one such architecture, known as Hexagonal Architecture which makes the software easy to maintain, manage, test and scale.
