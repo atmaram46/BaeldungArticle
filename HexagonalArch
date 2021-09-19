@@ -22,3 +22,137 @@ Now lets understand what these terms means:
 	     The Adapters are again of two types:
 	     	2.2.1 	Primary Adapters: It drives the application using the inbound port of an application and also called as Driving Adapters. Example are WebViews or Rest 			        Controllers.
 		2.2.2   Secondary Adapters: This is an implementation of an outbound port that is driven by the application and also called as Driven Adapters. Connection with 			messaging queues, databases, and external API calls are some examples.
+
+Hence, it talks about exposing multiple endpoints for communication. If we have right adapter for our port, then request will be fulfilled. This architecture consists of three layers namely, Framework, Application, and Domain.
+
+<Image></Imgae>
+
+Lets talk about these layers:
+	2.3.1 Domain: It is a core business logic layer and the implementation details of the outer layers are hidden with this.
+	2.3.2 Application: It acts as a mediator between the Domain layer and the Framework layer.
+	2.3.3 Framework: This layer has all the implementation details that how a domain layer will interact with the external world.
+
+3. Example of Hexagonal Architecture?
+
+Lets Understand a real-time example of cake service.
+1. Domain:
+Classes containing the information of Core modules. Like CakeDetails..
+
+public class Cake implements Serializable {
+    private static final long serialVersionUID = 100000000L;
+    private String name;
+
+    // Getters and setters for the name
+    public String getName() {
+        return name;
+    }
+  
+    public void setName(String name) {
+        this.name = name;
+    }
+  
+    @Override
+    public String toString() {
+        return "Cake [name=" + name + "]";
+    }
+}
+
+
+2. Inbound port: Define an interface through which our core application will enable its communication. It exposes the core application to the outside world.
+
+import java.util.List;
+  
+// Interface through which the core application communicates.
+public interface CakeService {
+    public void createCake(Cake cake);
+    public Cake getCake(String cakeName);
+    public List listCake();
+}
+
+
+3. Outbound port:Create one more interface to create or access the outside world i.e., Cake.
+
+import java.util.List;
+  
+// Interface to access the cake
+public interface CakeRepository {
+    public void createCake(Cake cake);
+    public Cake getCake(String cakeName);
+    public List getAllCake();
+}
+
+
+4. Primary Adapters: A controller could be our primary adapter which will provide endpoints for creating and fetching the resources.
+
+import java.util.List;
+  
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+  
+// This is the REST endpoint
+@RestController
+@RequestMapping("/cake")
+public class CakeRestController implements CakeRestUI {
+    @Autowired
+    private CakeService cakeService;
+  
+    @Override
+    public void createCake(Cake cake) {
+        cakeService.createCake(cake);
+    }
+  
+    @Override
+    public Cake getCake(String cakeName) {
+        return cakeService.getCake(cakeName);
+    }
+  
+    @Override
+    public List listCake() {
+        return cakeService.listCake();
+    }
+}
+
+
+5. Secondary Adapters: This will be the implementation of an outbound port. Since CakeRepository is our outbound port, so let’s implement it.
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+  
+import org.springframework.stereotype.Repository;
+  
+// Implementing the interface and
+// all the methods which have been
+// defined in the interace
+@Repository
+public class CakeRepositoryImpl
+    implements CakeRepository {
+    private Map<String, Cake> cakeStore
+        = new HashMap<String, Cake>();
+  
+    @Override
+    public void createCake(Cake cake) {
+        cakeStore.put(cake.getName(), cake);
+    }
+  
+    @Override
+    public Cake getCake(String cakeName) {
+        return cakeStore.get(cakeName);
+    }
+  
+    @Override
+    public List getAllCake() {
+        return cakeStore.values().stream().collect(Collectors.toList());
+    }
+}
+
+
+4. Conclusion:
+
+Advantages of the Hexagonal architecture:
+
+	- Easy to maintain: Since the core application logic(classes and objects) is isolated from the outside world and it is loosely coupled, it is easier to maintain. It is 			    easier to add some new features in either of the layers without touching the other one.
+	- Easy to adapt new changes: Since all the layers are independent and if we want to add or replace a new database, we just need to replace or add the database adapters, 				      without changing the domain logic of an application.
+	- Easy to test: Testing becomes easy. We can write the test cases for each layer by just mocking the ports using the mock adapters.
