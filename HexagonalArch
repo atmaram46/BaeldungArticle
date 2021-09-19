@@ -3,3 +3,22 @@ Quick and Practical Example of Hexagonal Architecture in Java
 1. Overview
 
 Software which requires minimum effort for maintenance is considered good in design. Meaning, maintenance is one of the must key feature which should be considered while designing the Architecture of an application. In this article, we will be looking one such architecture, known as Hexagonal Architecture which makes the software easy to maintain, manage, test and scale.
+
+2. What is Hexagonal Architecture?
+The term Hexagonal Architecture is coined by Alistair Cockburn in 2006. It is also known as Ports and Adapters Architecture. It divides an application into two parts namely, the inside part and the outside part.
+
+Inside Part: this consists of the core logic of an application. Meaning, how the different functionalities should performed, which service to be invoked for an action performed by user, what logic should be used, etc. In doing so, the core logic has been isolated completely from the outside world.
+
+Outside Part: This consists of the other aspects like the database, User Interface, messaging queues, etc. Meaning which is visible to outside world.
+
+Now the communication between these two parts can happen only through Ports and Adapters, hence coining the term Ports and Adapters Architecture.
+Thus providing the: Easy and Quick Maintainability, Technical Depth Reduction, Separation of Concerns and Business Logic Preservation.
+
+Now lets understand what these terms means:
+
+	2.1   The Ports: they acts as a gateway through which communication takes place between two parts. They can act as an inbound or outbound port. An Inbound port is 		      something like a service interface that has exposed the core logic to the outside world, via any different means like API endpoints, etc. An outbound port is 		      something like a repository interface that facilitates communication from application to persistence system.
+
+	2.2  The Adapters: They act as an implementation of a port that handles user inputs and translate it into the language-specific call. It basically encapsulates the logic 	       to interact with outer systems such as message queues, databases, etc. It also transforms the communication between external objects and core.
+	     The Adapters are again of two types:
+	     	2.2.1 	Primary Adapters: It drives the application using the inbound port of an application and also called as Driving Adapters. Example are WebViews or Rest 			        Controllers.
+		2.2.2   Secondary Adapters: This is an implementation of an outbound port that is driven by the application and also called as Driven Adapters. Connection with 			messaging queues, databases, and external API calls are some examples.
